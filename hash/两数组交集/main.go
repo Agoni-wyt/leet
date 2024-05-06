@@ -1,7 +1,13 @@
 package main
 
-func main() {
+import "fmt"
 
+func main() {
+	nums1 := []int{1, 2, 2, 1}
+	nums2 := []int{2, 2}
+
+	res := section(nums1, nums2)
+	fmt.Println(res)
 }
 
 /*
@@ -16,7 +22,7 @@ func main() {
 输出：[9,4]
 */
 func intersection(nums1 []int, nums2 []int) []int {
-	set := make(map[int]struct{}, 0) // 用map模拟set
+	set := make(map[int]struct{}) // 用map模拟set
 	res := make([]int, 0)
 	for _, v := range nums1 {
 		if _, ok := set[v]; !ok {
@@ -31,4 +37,29 @@ func intersection(nums1 []int, nums2 []int) []int {
 		}
 	}
 	return res
+}
+func section(nums1, nums2 []int) []int {
+	minList, toMapList := func(nums1, nums2 []int) ([]int, []int) {
+		if len(nums1) > len(nums2) {
+			return nums2, nums1
+		} else {
+			return nums1, nums2
+		}
+	}(nums1, nums2)
+	set := make(map[int]bool)
+	res := make([]int, 0)
+	for _, v := range toMapList {
+		if _, ok := set[v]; !ok {
+			set[v] = true
+		}
+	}
+
+	for _, v := range minList {
+		if _, ok := set[v]; ok {
+			res = append(res, v)
+			delete(set, v)
+		}
+	}
+	return res
+
 }
