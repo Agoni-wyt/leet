@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"slices"
+	"sort"
 )
 
 func main() {
@@ -53,4 +54,37 @@ func threeSum(nums []int) [][]int {
 		}
 	}
 	return res
+}
+
+func threeSum2(nums []int) [][]int {
+	sort.Ints(nums)
+	n := len(nums)
+	var ans [][]int
+	for i, x := range nums[:n-2] {
+		if i > 0 && x == nums[i-1] {
+			continue // 重复数字跳过
+		}
+		if x > 0 { // 连续三个大于0，后面只会更大，没必要再算
+			break
+		}
+		if x+nums[n-2]+nums[n-1] < 0 {
+			continue // +最大的两个值都<0,当前值应该继续变大
+		}
+		j, k := i+1, n-1 // 当前指针i，左指针i+1，右指针n-1
+		for j < k {      // 左右指针重合
+			s := x + nums[j] + nums[k]
+			if s > 0 { // 数太大了，大值要减少，右指针向左
+				k--
+			} else if s < 0 { // 数太小了，小值向右，左指针向右
+				j++
+			} else {
+				ans = append(ans, []int{x, nums[j], nums[k]})
+				for j++; j < k && nums[j] == nums[j-1]; j++ {
+				} // 左指针向右，如果是重复数字，继续向右
+				for k--; k > j && nums[k] == nums[k+1]; k-- {
+				} // 右指针向左，如果是重复数字，继续向左
+			}
+		}
+	}
+	return ans
 }
